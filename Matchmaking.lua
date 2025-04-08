@@ -1,10 +1,14 @@
---Add server region selecter: more servers, precise player location, better latency.
---Add warning for privacy especially for all under 13.
---Add play button on servers with the region.
---Add the division difference between player and the starter of the server.
---Allow for players 50 elo delta to be allowed as long as their recent (10 game) winrate is not above 50%.
---Put ELO to division charting sideways here, with player division in bold and progress to the right.
---Change requirement select to be on sides.
+--[[
+Add server region selector: more servers, precise player location, better latency.
+Add warning for a bit less locational privacy especially for all under 13.
+Add play button on servers with the region.
+--
+Add the division difference between the player and the player who started the server.
+Allow players 50 elo delta to be allowed as long as their recent (10 game) win rate is not above 50%.
+Put ELO to division charting sideways here, with player division in bold and progress to the right.
+----
+Change the requirement to be selected to be on sides.
+]]--
 
 local datastore = game:GetService("DataStoreService")
 local storage = game:GetService("ReplicatedStorage")
