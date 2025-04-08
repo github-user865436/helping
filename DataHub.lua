@@ -7,6 +7,7 @@ local datastoreservice = game:GetService("DataStoreService")
 local datastorage = datastoreservice:GetDataStore("RatingsContribution") --Do not change the name of this after implementing
 
 local events = replicatedstorage.Events
+local assets = replicatedstorage.Assets
 local module = replicatedstorage.RatingSystems  --Subject to change based on module location
 
 events.SetRating.Event:Connect(function(player, games)
@@ -25,8 +26,10 @@ events.SetRating.Event:Connect(function(player, games)
 	updated = true
 end)
 
-game.Players.PlayerAdded:Connect(function(player)
-	local defaultdata = {
+local PlayerAdded = function(player)
+	--[[
+	Move to assets named DefaultData
+	return {
 		RankedGames = {
 			{
 				Rating = 1500,
@@ -40,17 +43,20 @@ game.Players.PlayerAdded:Connect(function(player)
 			ClientLatencyHigh = 180,
 		},
 	}
-	
+	]]
+
+	local defaultData = require(assets.DefaultData)
 	local id = player.UserId
 	local savestate = datastorage:GetAsync(id)
 	if savestate == nil then
-		players[id] = defaultdata
+		players[id] = defaultData
 	else
-		players[id] = savestate
+		players[id] = saveState
 	end
 end)
+game.Players.PlayerAdded:Connect(PlayerAdded)
 
-game.Players.PlayerRemoving:Connect(function(player)
+local PlayerRemoving = function(player)
 	local id = player.UserId
 	if updated then --Checks if the data set is necessary
 		print(players[id])
@@ -58,3 +64,4 @@ game.Players.PlayerRemoving:Connect(function(player)
 	end
 	players[id] = nil --Clears up space
 end)
+game.Players.PlayerRemoving:Connect(PlayerRemoving)
