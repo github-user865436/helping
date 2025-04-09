@@ -14,45 +14,34 @@ local datastore = game:GetService("DataStoreService")
 local storage = game:GetService("ReplicatedStorage")
 local teleport = game:GetService("TeleportService")
 local messaging = game:GetService("MessagingService")
-local players = game:GetService("Players")
-
-local gId = game.PlaceId
 
 local playerdata = {
 	Divisions = {},
 	Parties = {},
-	Requirements = {},
 	Pairing = {},
 }
 
-local events = storage.Events
-local assets = storage.Assets
-
-local rankings = require(assets.Ranks)
+local rankings = require(storage.Assets.Ranks)
 local globalDS = datastore:GetGlobalDataStore("RatingsContribution")
 
 local function reserveServer()
-	local Server = teleport:ReserveServer(gId)
+	local Server = teleport:ReserveServer(game.PlaceId)
 	local Region = messaging:SubscribeAsync(Server)
 	return {Region, Server}
 end
 
 local function teleportPlayers(Server, Players)
-	teleport:TeleportToPrivateServer(gId, Server, Players)
+	teleport:TeleportToPrivateServer(game.PlaceId, Server, Players)
 end
 
 local function getPlayerRequirements(player)
-	
-end
-
-local function findParty()
-
+	return playerdata.Requirements[player.UserId]
 end
 
 local InitiateParty = function(player, players)
 	playerdata.Parties[player] = players --excluding the party owner
 end)
-events.InitiateParty.OnServerEvent:Connect(InitiateParty)
+storage.Events.InitiateParty.OnServerEvent:Connect(InitiateParty)
 
 local StartPairing = function(player)
 	local pairing = {player}
@@ -60,16 +49,12 @@ local StartPairing = function(player)
 	if party then
 		table.insert(pairing, table.unpack(party)
 	end
-	table.insert(playerdata.Pairing, pairing)
+	globalDS:SetAsync(-)
 end)
-events.StartPairing.OnServerEvent:Connect(StartPairing)
+storage.Events.StartPairing.OnServerEvent:Connect(StartPairing)
 
 local ChangeRequirements = function(player, division, latency)
 	local id = player.UserId
 	playerdata.Requirements[id] = {Division = division, Latency = latency}
 end)
-events.ChangeRequirements.OnServerEvent:Connect(ChangeRequirements)
-
-players.PlayerAdded:Connect(function(player)
-
-end)
+storage.Events.ChangeRequirements.OnServerEvent:Connect(ChangeRequirements)
