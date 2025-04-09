@@ -24,9 +24,11 @@ local playerdata = {
 local rankings = require(storage.Assets.Ranks)
 local globalDS = datastore:GetGlobalDataStore("RatingsContribution")
 
-local function reserveServer()
+local function reserveServer(destroy)
 	local Server = teleport:ReserveServer(game.PlaceId)
 	local Region = messaging:SubscribeAsync(Server)
+	storage.Events.ManageServerList:FireAllClients()
+	messaging:PublishAsync(Server)
 	return {Region, Server}
 end
 
@@ -40,21 +42,21 @@ end
 
 local InitiateParty = function(player, players)
 	playerdata.Parties[player] = players --excluding the party owner
-end)
+end
 storage.Events.InitiateParty.OnServerEvent:Connect(InitiateParty)
 
 local StartPairing = function(player)
 	local pairing = {player}
 	local party = playerdata.Parties[player]
 	if party then
-		table.insert(pairing, table.unpack(party)
+		table.insert(pairing, table.unpack(party))
 	end
-	globalDS:SetAsync(-)
-end)
+	globalDS:SetAsync()
+end
 storage.Events.StartPairing.OnServerEvent:Connect(StartPairing)
 
 local ChangeRequirements = function(player, division, latency)
 	local id = player.UserId
 	playerdata.Requirements[id] = {Division = division, Latency = latency}
-end)
+end
 storage.Events.ChangeRequirements.OnServerEvent:Connect(ChangeRequirements)
