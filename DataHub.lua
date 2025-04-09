@@ -8,27 +8,28 @@ local updated = false
 
 local SetRating = function(player, games)
 	local id = player.UserId
-	
+
 	local data = players[id]
 	local live = data[#data]
 
 	local module = storage.RatingSystems  --Subject to change based on module location
-	
+
 	local name = "GLICKO-2"
 	local input = {
 		Constant = 0.5, --Do not change unless you know what you are doing
 		Base = table.clone(live),
 		Games = games
 	}
-	
+
 	table.insert(players[id].RankedGames, require(module[name])(input))
 	updated = true
-end)
+end
 storage.Events.SetRating.Event:Connect(SetRating)
 
 local PlayerAdded = function(player)
-	players[player.UserId] = (datastore:GetAsync(player.UserId) or require(storage.Assets.DefaultData))
-end)
+	local id = player.UserId
+	players[id] = (datastore:GetAsync(id) or require(storage.Assets.DefaultData))
+end
 game.Players.PlayerAdded:Connect(PlayerAdded)
 
 local PlayerRemoving = function(player)
@@ -38,5 +39,5 @@ local PlayerRemoving = function(player)
 		datastorage:SetAsync(id, players[id])
 	end
 	players[id] = nil --Clears up space
-end)
+end
 game.Players.PlayerRemoving:Connect(PlayerRemoving)
